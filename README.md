@@ -2,11 +2,18 @@
 
 A modern, user-friendly find and replace tool built with Angular. This application allows users to easily search for and replace text within a document.
 
+## Installation
+
+1. Clone the repository: `git clone https://github.com/Rupam-Shil/find-and-replace.git`
+2. Navigate to the project directory: `cd find-and-replace`
+3. Install dependencies: `npm install | yarn`
+4. Start the development server: `ng serve | yarn start`
+5. Open your browser and navigate to `http://localhost:4200`
+
 ## Features
 
 - Clean, intuitive user interface
 - Real-time match counting
-- Find next occurrence
 - Replace single occurrence
 - Replace all occurrences
 - Case-sensitive search

@@ -6,68 +6,87 @@ import { FindReplaceService } from '../../services/find-replace.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-find-replace',
-  templateUrl: './find-replace.component.html',
-  styleUrls: ['./find-replace.component.css'],
-  standalone: true,
-  imports: [FormsModule, CommonModule, TextHighlightPipe]
+	selector: 'app-find-replace',
+	templateUrl: './find-replace.component.html',
+	styleUrls: ['./find-replace.component.css'],
+	standalone: true,
+	imports: [FormsModule, CommonModule, TextHighlightPipe],
 })
 export class FindReplaceComponent {
-  content = '';
-  findText = '';
-  replaceText = '';
-  matchCount = 0;
-  highlightedContent: SafeHtml = '';
+	content = '';
+	updatedContent = '';
+	findText = '';
+	replaceText = '';
+	matchCount = 0;
+	highlightedContent: SafeHtml = '';
 
-  constructor(
-    private findReplaceService: FindReplaceService,
-    private sanitizer: DomSanitizer,
-    private highlightPipe: TextHighlightPipe
-  ) {}
+	constructor(
+		private findReplaceService: FindReplaceService,
+		private sanitizer: DomSanitizer,
+		private highlightPipe: TextHighlightPipe
+	) {}
 
-  onContentChange() {
-    this.updateHighlightedContent();
-    if (this.findText) {
-      this.findNext();
-    }
-  }
+	onContentUpdate() {
+		this.updatedContent = this.content;
+		this.onContentChange();
+	}
 
-  onSearchChange() {
-    this.updateHighlightedContent();
-    this.findNext();
-  }
+	onContentChange() {
+		this.updateHighlightedContent();
+		if (this.findText) {
+			this.findNext();
+		}
+	}
 
-  updateHighlightedContent() {
-    if (this.content && this.findText) {
-      const highlighted = this.highlightPipe.transform(this.content, this.findText);
-      this.highlightedContent = this.sanitizer.bypassSecurityTrustHtml(highlighted);
-    } else {
-      this.highlightedContent = this.content;
-    }
-  }
+	onSearchChange() {
+		if (!this.findText) {
+			this.matchCount = 0;
+			this.highlightedContent = '';
+			this.updatedContent = this.content;
+			return;
+		}
+		this.updateHighlightedContent();
+		this.findNext();
+	}
 
-  findNext() {
-    this.matchCount = this.findReplaceService.countMatches(this.content, this.findText);
-  }
+	updateHighlightedContent() {
+		if (this.updatedContent && this.findText) {
+			const highlighted = this.highlightPipe.transform(
+				this.updatedContent,
+				this.findText
+			);
+			this.highlightedContent =
+				this.sanitizer.bypassSecurityTrustHtml(highlighted);
+		} else {
+			this.highlightedContent = this.updatedContent;
+		}
+	}
 
-  replace() {
-    const result = this.findReplaceService.replaceNext(
-      this.content,
-      this.findText,
-      this.replaceText
-    );
-    if (result) {
-      this.content = result;
-      this.onContentChange();
-    }
-  }
+	findNext() {
+		this.matchCount = this.findReplaceService.countMatches(
+			this.updatedContent,
+			this.findText
+		);
+	}
 
-  replaceAll() {
-    this.content = this.findReplaceService.replaceAll(
-      this.content,
-      this.findText,
-      this.replaceText
-    );
-    this.onContentChange();
-  }
+	replace() {
+		const result = this.findReplaceService.replaceNext(
+			this.updatedContent,
+			this.findText,
+			this.replaceText
+		);
+		if (result) {
+			this.updatedContent = result;
+			this.onContentChange();
+		}
+	}
+
+	replaceAll() {
+		this.updatedContent = this.findReplaceService.replaceAll(
+			this.updatedContent,
+			this.findText,
+			this.replaceText
+		);
+		this.onContentChange();
+	}
 }

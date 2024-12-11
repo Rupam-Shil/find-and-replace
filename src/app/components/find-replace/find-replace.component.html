@@ -1,0 +1,50 @@
+<div class="container">
+  <h1>Find and Replace Tool</h1>
+  
+  <div class="text-area-container">
+    <textarea
+      [(ngModel)]="content"
+      placeholder="Paste or type your text here..."
+      rows="10"
+      class="main-textarea"
+      (ngModelChange)="onContentChange()"
+    ></textarea>
+
+    <div class="preview" *ngIf="findText && content" [innerHTML]="highlightedContent">
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="input-group">
+      <input
+        type="text"
+        [(ngModel)]="findText"
+        placeholder="Find text..."
+        class="input-field"
+        (ngModelChange)="onSearchChange()"
+      />
+      <input
+        type="text"
+        [(ngModel)]="replaceText"
+        placeholder="Replace with..."
+        class="input-field"
+      />
+    </div>
+    
+    <div class="button-group">
+      <button (click)="findNext()" class="btn" [disabled]="!findText">
+        Find Next
+      </button>
+      <button (click)="replace()" class="btn" [disabled]="!findText">
+        Replace
+      </button>
+      <button (click)="replaceAll()" class="btn" [disabled]="!findText">
+        Replace All
+      </button>
+    </div>
+
+    <div class="status" *ngIf="findText">
+      Matches found: {{ matchCount }}
+    </div>
+  </div>
+</div>
